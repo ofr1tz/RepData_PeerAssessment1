@@ -60,7 +60,7 @@ ggplot(steps_day, aes(x=steps)) +
     theme_minimal()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](PA1_template_files/figure-html/hist_steps_per_day-1.png)<!-- -->
 
 We calculate the mean and median of steps taken per day.
 
@@ -95,7 +95,7 @@ ggplot(mean_steps_interval, aes(x=interval, y=steps)) +
     theme_minimal()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](PA1_template_files/figure-html/time_series_steps_per_interval-1.png)<!-- -->
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -152,7 +152,7 @@ ggplot(steps_day, aes(x=steps)) +
     theme_minimal()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](PA1_template_files/figure-html/hist_steps_per_day_imputed-1.png)<!-- -->
 
 Then we calculate the mean and median of steps taken per day **based on the dataset with imputed data**.
 
@@ -190,6 +190,6 @@ ggplot(mean_steps_interval, aes(x=interval, y=steps)) +
     theme_minimal()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](PA1_template_files/figure-html/steps_per_interval_weekday-1.png)<!-- -->
   
 It seems that the test person is less active in the morning and more active in the evening on weekends.

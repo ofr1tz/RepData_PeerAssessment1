@@ -52,7 +52,7 @@ steps_day <- dat %>%
 
 Then we make a histogram of the total number of steps taken per day.
 
-```{r, warning=FALSE, fig.height=3}
+```{r hist_steps_per_day, warning=FALSE, fig.height=3}
 ggplot(steps_day, aes(x=steps)) + 
     geom_histogram(bins=20) +
     ggtitle("Total number of steps taken per day") +
@@ -84,7 +84,7 @@ mean_steps_interval <- dat %>%
 
 We plot the average number of steps per interval as a time series.
 
-```{r, fig.height=3}
+```{r time_series_steps_per_interval, fig.height=3}
 ggplot(mean_steps_interval, aes(x=interval, y=steps)) +
     geom_line() +
     ggtitle("Average number of steps per 5-minute interval") +
@@ -124,7 +124,7 @@ dat <- dat %>%
 
 Now we make a histogram of the total number of steps taken per day **based on the dataset with imputed data**.
 
-```{r, warning=FALSE, fig.height=3}
+```{r hist_steps_per_day_imputed, warning=FALSE, fig.height=3}
 steps_day <- dat %>%
     group_by(date) %>%
     summarise(steps=sum(steps))
@@ -157,7 +157,7 @@ dat <- dat %>%
 
 Let's plot the average number of steps taken per interval for weekdays and weekend.
 
-```{r}
+```{r steps_per_interval_weekday}
 mean_steps_interval <- dat %>%
     group_by(interval, type) %>%
     summarise(steps=mean(steps, na.rm=TRUE))
