@@ -8,7 +8,7 @@ output:
 
 ## Loading packages
 
-Let's load the tidyverse package for smoother data transformation and visualisation!
+Let's load tidyverse and lubridate for data transformation, visualisation and time processing.
 
 
 ```r
@@ -19,10 +19,6 @@ if (!require(tidyverse)) {
 if (!require(lubridate)) {
       install.packages("lubridate")
       library(lubridate)
-}
-if (!require(xtable)) {
-      install.packages("xtable")
-      library(xtable)
 }
 ```
 
@@ -35,13 +31,13 @@ We unzip the provided archive file, read in the comma-separated value file as a 
 ```r
 unzip("activity.zip")
 dat <- as.tibble(read.csv("activity.csv")) %>%
-    mutate(date=lubridate::ymd(date))
+    mutate(date=ymd(date))
 ```
 
 
 ## What is the mean total number of steps taken per day?
 
-First, we sum up the steps data grouped by date.
+First, we sum up the steps data grouped by date:
 
 
 ```r
@@ -50,7 +46,7 @@ steps_day <- dat %>%
     summarise(steps=sum(steps))
 ```
 
-Then we make a histogram of the total number of steps taken per day.
+Then we plot a histogram of the total number of steps taken per day:
 
 
 ```r
@@ -62,12 +58,12 @@ ggplot(steps_day, aes(x=steps)) +
 
 ![](PA1_template_files/figure-html/hist_steps_per_day-1.png)<!-- -->
 
-We calculate the mean and median of steps taken per day.
+We calculate the mean and median of steps taken per day:
 
 
 ```r
-mean_steps_day <- format(mean(steps_day$steps, na.rm=TRUE), scientific=FALSE, big.mark=",")
-median_steps_day <- format(median(steps_day$steps, na.rm=TRUE), scientific=FALSE, big.mark=",")
+mean_steps_day <- mean(steps_day$steps, na.rm=TRUE)
+median_steps_day <- median(steps_day$steps, na.rm=TRUE)
 ```
 
 The **median** total number of steps taken per day is **10,765**. 
@@ -76,7 +72,7 @@ At **10,766.19**, the **mean** is very close to the median. This is an indicatio
 
 ## What is the average daily activity pattern?
 
-We calculate the average number of steps taken per 5-minute interval.
+We calculate the average number of steps taken per 5-minute interval:
 
 
 ```r
@@ -85,7 +81,7 @@ mean_steps_interval <- dat %>%
     summarise(steps=mean(steps, na.rm=TRUE))
 ```
 
-We plot the average number of steps per interval as a time series.
+We plot the average number of steps per interval as a time series:
 
 
 ```r
@@ -103,20 +99,28 @@ Which 5-minute interval, on average across all the days in the dataset, contains
 ```r
 max_steps_interval <- mean_steps_interval %>%
     filter(steps == max(steps)) %>% 
-    select(interval) 
+    select(interval, steps) %>%
+    print()
 ```
 
-The interval 835 contains the maximum number of steps on the average.
+```
+## # A tibble: 1 x 2
+##   interval    steps
+##      <int>    <dbl>
+## 1      835 206.1698
+```
+
+The interval 835 contains the maximum number of steps (206) on the average. Averaged across all days, activity peaks in the morning.
 
 ## Imputing missing values
 
-Let's see how many missing values there are in each column of the dataset.
+Let's see how many missing values there are in each column of the dataset:
 
 
 ```r
 count_na <- dat %>%
-    summarise_all(funs(sum(is.na(.))))
-print(count_na)
+    summarise_all(funs(sum(is.na(.)))) %>%
+    print()
 ```
 
 ```
@@ -126,9 +130,9 @@ print(count_na)
 ## 1  2304     0        0
 ```
 
-There are 2,304 missing value rows in the dataset.  
+Only the steps variable has missing values. There are 2,304 missing value rows in the dataset. This corresponds to 13.11% of the observations.  
 
-As the number of steps taken seems to depend largely on the time of the day, we impute missing values by using the mean value for the specific interval across all days.
+As the number of steps taken seems to depend largely on the time of the day, we impute missing values by using the mean value for the specific interval across all days:
 
 
 ```r
@@ -137,8 +141,7 @@ dat <- dat %>%
     mutate(steps = ifelse(is.na(steps), mean(steps, na.rm = TRUE), steps))
 ```
 
-
-Now we make a histogram of the total number of steps taken per day **based on the dataset with imputed data**.
+Now we make a histogram of the total number of steps taken per day **based on the dataset with imputed data**:
 
 
 ```r
@@ -158,8 +161,8 @@ Then we calculate the mean and median of steps taken per day **based on the data
 
 
 ```r
-mean_steps_day <- format(mean(steps_day$steps, na.rm=TRUE), scientific=FALSE, big.mark=",")
-median_steps_day <- format(median(steps_day$steps, na.rm=TRUE), scientific=FALSE, big.mark=",")
+mean_steps_day <- mean(steps_day$steps, na.rm=TRUE)
+median_steps_day <- median(steps_day$steps, na.rm=TRUE)
 ```
 
 The **median** total number of steps taken per day now is **10,766.19**, and the **mean** is **10,766.19**.  As we have used a mean value for imputation, the mean has not changed, and the median has moved towards the mean.
@@ -167,7 +170,7 @@ The **median** total number of steps taken per day now is **10,766.19**, and the
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-We create a new factor variable in the dataset with two levels -- "weekday" and "weekend".
+We create a new factor variable in the dataset with two levels -- "weekday" and "weekend":
 
 
 ```r
@@ -175,7 +178,7 @@ dat <- dat %>%
     mutate(type=as.factor(ifelse(wday(date)==1 | wday(date)==7, "weekend", "weekday"))) 
 ```
 
-Let's plot the average number of steps taken per interval for weekdays and weekend.
+Let's plot the average number of steps taken per interval for weekdays and weekend:
 
 
 ```r
@@ -192,4 +195,4 @@ ggplot(mean_steps_interval, aes(x=interval, y=steps)) +
 
 ![](PA1_template_files/figure-html/steps_per_interval_weekday-1.png)<!-- -->
   
-It seems that the test person is less active in the morning and more active in the evening on weekends.
+It seems that in the weekend, there is less activty in the morning, but more activity around noon and in the evening than on weekdays.
